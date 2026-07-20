@@ -69,15 +69,14 @@ export default function BookService() {
     if (!files.length) return;
     setUploading(true);
     try {
-      const uploaded = [];
-      for (const file of files) {
+      const uploaded = await Promise.all(files.map(async (file) => {
         const fd = new FormData();
         fd.append("file", file);
         const { data } = await api.post("/upload", fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        uploaded.push(`${process.env.REACT_APP_BACKEND_URL}${data.url}`);
-      }
+        return `${process.env.REACT_APP_BACKEND_URL}${data.url}`;
+      }));
       setF((prev) => ({ ...prev, images: [...prev.images, ...uploaded] }));
       toast.success(`${uploaded.length} image(s) uploaded`);
     } catch (err) {

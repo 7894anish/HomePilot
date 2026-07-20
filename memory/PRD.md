@@ -14,7 +14,14 @@ Build a production-ready Urban Company-style home services platform for Plumbing
 - **Technician** — accepts/rejects jobs, updates status, uploads work photos, earns commissions
 - **Admin** — manages catalog, users, bookings, assigns technicians, monitors analytics
 
-## Implemented (2026-02)
+## Implemented (2026-02, iteration 2)
+- ✅ **Modularized backend**: server.py 1077→60 lines. Routers split into `app/routers/{auth,catalog,bookings,payments,admin,uploads}.py`; shared `app/{db,security,models,emailer,storage,seed}.py`.
+- ✅ **Resend emails** wired via `emergentintegrations` proxy for welcome, booking confirmation & password reset — falls back to logs when `EMERGENT_EMAIL_KEY` is empty (platform-provisioned).
+- ✅ **File upload** endpoint `POST /api/upload` + serve at `GET /api/files/{id}` using Emergent object storage; 5MB limit + MIME whitelist. Booking wizard now has a real file picker (was URL input).
+- ✅ **Debounced search** on /services (350 ms) — no more Enter needed.
+- Test coverage: **56/56 backend** (38 regression + 18 new), full E2E in Playwright.
+
+## Implemented (2026-02, iteration 1)
 - ✅ Public: Home (hero, categories, popular services, why-us, process, testimonials, FAQ, CTA, footer, WhatsApp+call FAB), About, Services (search/filter/pagination), Service Detail, Contact
 - ✅ Auth: register (customer/technician), login, logout, /me, refresh, forgot/reset password, change password, brute-force lockout, admin seeded
 - ✅ Customer dashboard: overview KPIs, My Bookings, Booking detail (cancel + pay), Payments, Reviews, Notifications
