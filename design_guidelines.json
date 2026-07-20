@@ -1,0 +1,149 @@
+{
+  "theme_strategy": "Soft Utility (Trust + Approachability). The app bridges premium e-commerce (service booking) and functional SaaS (dashboards). A light, clean base with vibrant interactive colors that mirrors Urban Company's premium look.",
+  "typography": {
+    "headings": {
+      "family": "Manrope, sans-serif",
+      "scale": {
+        "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight",
+        "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-tight",
+        "h3": "text-xl sm:text-2xl tracking-tight leading-snug",
+        "h4": "text-lg sm:text-xl font-semibold"
+      },
+      "rules": "Use Manrope font for all headings. Never use Inter for headings. Keep leading-tight for multiple lines."
+    },
+    "body": {
+      "family": "DM Sans, sans-serif",
+      "scale": {
+        "large": "text-lg leading-relaxed",
+        "default": "text-base leading-relaxed",
+        "small": "text-sm leading-normal",
+        "tiny": "text-xs tracking-[0.05em] uppercase font-medium"
+      }
+    }
+  },
+  "colors": {
+    "primary": {
+      "DEFAULT": "#0d6efd",
+      "hover": "#0b5ed7",
+      "hsl": "216 98% 52%"
+    },
+    "secondary": {
+      "DEFAULT": "#fd7e14",
+      "hover": "#e86e10",
+      "hsl": "27 98% 54%"
+    },
+    "background": {
+      "light": "#f8f9fa",
+      "surface": "#ffffff"
+    },
+    "text_colors": {
+      "main": "#1e293b",
+      "muted": "#64748b"
+    },
+    "rules": "Never use pure #000000. Text must meet APCA contrast over primary backgrounds. Update index.css variables for primary (216 98% 52%) and secondary (27 98% 54%). Use primary ONLY for main actions (e.g. 'Book Service')."
+  },
+  "visual_enhancers": {
+    "shadows": "Ambient + Direct approach. Use `shadow-sm` for standard cards, `shadow-xl shadow-blue-500/10` on hover for interactive elements.",
+    "borders": "1px solid #e2e8f0 (slate-200). Semi-transparent borders on glassmorphism `border-slate-200/50`.",
+    "radius": "Use nested radii. Outer containers `rounded-2xl` or `rounded-xl`, inner elements `rounded-lg` or `rounded-md`."
+  },
+  "components": [
+    {
+      "name": "Header / Navbar",
+      "rules": "Sticky top with Glassmorphism `bg-white/80 backdrop-blur-xl border-b border-slate-200`. Do not use completely transparent backgrounds. Include a clear 'Login' or 'Book' CTA."
+    },
+    {
+      "name": "Hero Section",
+      "rules": "High visual impact. Asymmetric layout with clear search/filter block. If using a background image, ensure a gradient overlay (`bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent`) for text contrast."
+    },
+    {
+      "name": "Cards (Services)",
+      "rules": "Flat solid background (`bg-white`), subtle 1px border. On Hover: `-translate-y-1 shadow-lg` transition. Image at top (`aspect-video` or `aspect-square`), content at bottom with generous padding `p-6`."
+    },
+    {
+      "name": "Dashboards (Customer/Tech/Admin)",
+      "rules": "High Density Grid. Tight gaps `gap-4` to `gap-6`. Use flat solid surfaces `bg-white` on `bg-slate-50` background. Sidebar navigation. Avoid heavy drop shadows here."
+    },
+    {
+      "name": "Multi-Step Booking Wizard",
+      "rules": "Use clear progress indicators. Inputs must use Shadcn form elements. Avoid native browser select/date inputs."
+    }
+  ],
+  "layouts_and_grids": {
+    "marketing": "The 'Bento' Grid Protocol. Asymmetrical, gap-8 to gap-12. Avoid rigid equal columns when possible.",
+    "dashboard": "Dense, functional, gap-4 to gap-6. CSS Grid `grid-cols-1 md:grid-cols-3 lg:grid-cols-4`.",
+    "spacing": "Generous padding. Use `p-8`, `p-12`, `p-16` for page sections. Containers with borders must have internal padding (`p-6`) to prevent text collision."
+  },
+  "motion": {
+    "hover": "Scale and shadow changes. Add `transition-all duration-200 ease-out hover:-translate-y-1` to cards.",
+    "page_transitions": "Fade in and slide up slightly (`opacity-0 translate-y-4` to `opacity-100 translate-y-0`) using Framer Motion.",
+    "rules": "Respect `prefers-reduced-motion`. Do not use universal `transition-all` on elements that contain complex transforms."
+  },
+  "accessibility": {
+    "contrast": "Minimum 4.5:1 for standard text.",
+    "testing": "All interactive and key informational elements MUST include `data-testid` attribute (e.g. `data-testid='service-book-btn'`, `data-testid='login-submit'`).",
+    "focus": "High contrast focus rings: `focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`."
+  },
+  "media_and_icons": {
+    "icons": "Use `lucide-react` for standard UI icons. Clean, consistent stroke widths.",
+    "image_handling": "Max height constraints on mobile `max-h-[80vh] md:max-h-none`. Images should cover containers using `object-cover`."
+  },
+  "image_urls": {
+    "hero_banner": [
+      {
+        "url": "https://images.pexels.com/photos/6196694/pexels-photo-6196694.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Adult woman operating vacuum cleaner, suitable for home cleaning hero",
+        "category": "hero_banner"
+      }
+    ],
+    "cleaning_service": [
+      {
+        "url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1Mjh8MHwxfHNlYXJjaHwzfHxob21lJTIwY2xlYW5pbmclMjBzZXJ2aWNlfGVufDB8fHx8MTc4NDUzMzM5NHww&ixlib=rb-4.1.0&q=85",
+        "description": "Cleaning person holding spray bottle",
+        "category": "service_thumbnail"
+      }
+    ],
+    "plumbing_service": [
+      {
+        "url": "https://images.unsplash.com/photo-1676210134188-4c05dd172f89?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwxfHxwbHVtYmVyJTIwZml4aW5nfGVufDB8fHx8MTc4NDUzMzM5NHww&ixlib=rb-4.1.0&q=85",
+        "description": "Plumber working on pipe in wall",
+        "category": "service_thumbnail"
+      }
+    ],
+    "ac_repair_service": [
+      {
+        "url": "https://images.pexels.com/photos/33671149/pexels-photo-33671149.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Technician repairing an air conditioner unit",
+        "category": "service_thumbnail"
+      }
+    ],
+    "electrician_service": [
+      {
+        "url": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwxfHxlbGVjdHJpY2lhbiUyMHdvcmtpbmd8ZW58MHx8fHwxNzg0NTMzMzk0fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Electrician installing wiring",
+        "category": "service_thumbnail"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Update `/app/frontend/src/index.css` to use HSL variables for Primary (`216 98% 52%` / #0d6efd) and Secondary (`27 98% 54%` / #fd7e14) colors.",
+    "Update `/app/frontend/tailwind.config.js` with 'Manrope' (headings) and 'DM Sans' (body) font families.",
+    "Ensure `lucide-react` is utilized for all system icons. Add `framer-motion` for transitions.",
+    "Implement Shadcn UI for complex interactive components (Select, Dialog, Tabs, Calendar). Do NOT build these from scratch with native HTML tags.",
+    "Use `sonner` for toast notifications (`/app/frontend/src/components/ui/sonner.jsx` or `.tsx` equivalents).",
+    "Remove default boilerplate CSS in App.css that applies generic `text-align: center;` to the whole app.",
+    "Include `data-testid` attributes on interactive components (buttons, links, inputs) to ensure E2E test reliability."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Do not converge toward generic AI outputs. Avoid uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) for sticky navs and modal overlays.",
+    "Do NOT apply universal transitions (e.g. `transition: all`). This breaks transform animations.",
+    "Never center align the app container in css. It disrupts human natural reading flow.",
+    "Use pill-shaped or slightly rounded buttons (radius 8px) with hover micro-animations matching the app style.",
+    "Never use AI assistant emoji characters (🤖🧠💭💡) for icons. Use proper vector icons.",
+    "Every interaction needs micro-animations - hover states, transitions, entrance animations.",
+    "Use 2-3x more spacing than feels comfortable (e.g. p-8, p-12). Cramped designs look cheap.",
+    "Always use the provided image URLs. Missing images lead to placeholder text, which is FORBIDDEN."
+  ]
+}
