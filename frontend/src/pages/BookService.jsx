@@ -28,6 +28,7 @@ export default function BookService() {
   const [step, setStep] = useState(0);
   const [busy, setBusy] = useState(false);
   const [couponBusy, setCouponBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [discount, setDiscount] = useState(0);
 
   const [f, setF] = useState({
@@ -60,6 +61,30 @@ export default function BookService() {
       toast.error(toMsg(err));
     } finally {
       setCouponBusy(false);
+    }
+  };
+
+  const handleFiles = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const uploaded = [];
+      for (const file of files) {
+        const fd = new FormData();
+        fd.append("file", file);
+        const { data } = await api.post("/upload", fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        uploaded.push(`${process.env.REACT_APP_BACKEND_URL}${data.url}`);
+      }
+      setF((prev) => ({ ...prev, images: [...prev.images, ...uploaded] }));
+      toast.success(`${uploaded.length} image(s) uploaded`);
+    } catch (err) {
+      toast.error(toMsg(err));
+    } finally {
+      setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -192,11 +217,35 @@ export default function BookService() {
                   <Textarea rows={5} value={f.problem_description} onChange={(e) => setF({ ...f, problem_description: e.target.value })} placeholder="Tell us more so we send the right pro..." data-testid="problem-input" />
                 </div>
                 <div>
-                  <Label>Image URLs (comma separated, optional)</Label>
-                  <Input placeholder="https://... , https://..." value={f.images.join(", ")} onChange={(e) => setF({ ...f, images: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} data-testid="images-input" />
+                  <Label>Upload images (optional)</Label>
+                  <div className="flex items-center gap-3 mt-1">
+                    <label className="inline-flex items-center gap-2 px-4 h-10 rounded-lg border border-dashed border-slate-300 hover:border-brand cursor-pointer text-sm" data-testid="images-file-label">
+                      <span>{uploading ? "Uploading..." : "Choose files"}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        disabled={uploading}
+                        onChange={handleFiles}
+                        data-testid="images-file-input"
+                      />
+                    </label>
+                    <span className="text-xs text-slate-500">JPG / PNG / WebP · up to 5 MB each</span>
+                  </div>
                   {f.images.length > 0 && (
                     <div className="flex gap-2 mt-3 flex-wrap">
-                      {f.images.map((u, i) => <img key={i} src={u} alt="" className="h-16 w-16 object-cover rounded-lg border" />)}
+                      {f.images.map((u, i) => (
+                        <div key={i} className="relative">
+                          <img src={u} alt="" className="h-16 w-16 object-cover rounded-lg border" />
+                          <button
+                            type="button"
+                            onClick={() => setF({ ...f, images: f.images.filter((_, j) => j !== i) })}
+                            className="absolute -top-1 -right-1 h-5 w-5 grid place-items-center rounded-full bg-slate-900 text-white text-xs"
+                            data-testid={`remove-image-${i}`}
+                          >×</button>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

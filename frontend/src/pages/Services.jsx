@@ -17,10 +17,25 @@ export default function Services() {
   const size = 12;
   const q = params.get("q") || "";
   const category = params.get("category") || "";
+  const [qLocal, setQLocal] = useState(q);
 
   useEffect(() => {
     api.get("/categories").then((r) => setCategories(r.data));
   }, []);
+
+  // Debounce local search input to URL
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (qLocal === q) return;
+      const p = new URLSearchParams(params);
+      if (qLocal) p.set("q", qLocal); else p.delete("q");
+      p.delete("page");
+      setParams(p);
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qLocal]);
 
   useEffect(() => {
     setItems(null);
@@ -35,13 +50,7 @@ export default function Services() {
     });
   }, [q, category, page]);
 
-  const setQ = (val) => {
-    const p = new URLSearchParams(params);
-    if (val) p.set("q", val); else p.delete("q");
-    p.delete("page");
-    setParams(p);
-    setPage(1);
-  };
+  const setQ = (val) => setQLocal(val);
   const setCategory = (val) => {
     const p = new URLSearchParams(params);
     if (val) p.set("category", val); else p.delete("category");
@@ -61,10 +70,10 @@ export default function Services() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
             <Input
-              defaultValue={q}
+              value={qLocal}
+              onChange={(e) => setQLocal(e.target.value)}
               placeholder="Search services..."
               className="pl-10 h-11"
-              onKeyDown={(e) => { if (e.key === "Enter") setQ(e.target.value); }}
               data-testid="services-search"
             />
           </div>
