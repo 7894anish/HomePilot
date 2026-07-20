@@ -32,18 +32,20 @@ async def upload_image(file: UploadFile = File(...),
     path = f"{APP_NAME}/uploads/{user['id']}/{fid}.{ext}"
     try:
         result = put_object(path, data, MIME[ext])
+        doc = {
+            "id": fid, "storage_path": result["path"],
+            "original_filename": file.filename,
+            "content_type": MIME[ext], "size": result["size"],
+            "user_id": user["id"], "is_deleted": False,
+            "created_at": now_iso(),
+        }
+        await db.files.insert_one(doc)
+        return {"id": fid, "path": result["path"], "size": result["size"], "url": f"/api/files/{fid}"}
+    except HTTPException:
+        raise
     except Exception as e:
         log.error(f"upload failed: {e}")
         raise HTTPException(500, "Storage upload failed")
-    doc = {
-        "id": fid, "storage_path": result["path"],
-        "original_filename": file.filename,
-        "content_type": MIME[ext], "size": result["size"],
-        "user_id": user["id"], "is_deleted": False,
-        "created_at": now_iso(),
-    }
-    await db.files.insert_one(doc)
-    return {"id": fid, "path": result["path"], "size": result["size"], "url": f"/api/files/{fid}"}
 
 
 def _decode_token(token: str) -> dict | None:
@@ -75,7 +77,7 @@ async def download_file(file_id: str, request_auth: str | None = Query(None, ali
         raise HTTPException(404, "File not found")
     try:
         data, ct = get_object(rec["storage_path"])
+        return Response(content=data, media_type=rec.get("content_type", ct))
     except Exception as e:
         log.error(f"download failed: {e}")
         raise HTTPException(500, "Storage read failed")
-    return Response(content=data, media_type=rec.get("content_type", ct))

@@ -197,10 +197,9 @@ async def create_review(body: ReviewIn, user: dict = Depends(require_role("custo
 
 @router.get("/reviews/mine")
 async def my_reviews(user: dict = Depends(get_current_user)):
+    q: dict = {}
     if user["role"] == "customer":
         q = {"customer_id": user["id"]}
     elif user["role"] == "technician":
         q = {"technician_id": user["id"]}
-    else:
-        q = {}
     return await db.reviews.find(q, {"_id": 0}).sort("created_at", -1).to_list(500)
