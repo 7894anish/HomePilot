@@ -11,7 +11,7 @@ from app.storage import init_storage
 from app.routers.auth import router as auth_router, profile_router
 from app.routers.catalog import router as catalog_router
 from app.routers.bookings import router as bookings_router
-from app.routers.payments import router as payments_router
+# from app.routers.payments import router as payments_router
 from app.routers.admin import router as admin_router
 from app.routers.uploads import router as uploads_router
 
@@ -26,7 +26,7 @@ api.include_router(auth_router)
 api.include_router(profile_router)
 api.include_router(catalog_router)
 api.include_router(bookings_router)
-api.include_router(payments_router)
+# api.include_router(payments_router)
 api.include_router(admin_router)
 api.include_router(uploads_router)
 
