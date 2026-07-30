@@ -39,17 +39,18 @@ export default function Home() {
   const [services, setServices] = useState(null);
   const [q, setQ] = useState("");
   const nav = useNavigate();
-
   useEffect(() => {
-    (async () => {
-      const [c, s] = await Promise.all([
-        api.get("/categories"),
-        api.get("/services?size=8"),
-      ]);
+  (async () => {
+    try {
+      const c = await api.get("/categories");
+      const s = await api.get("/services?size=8");
       setCategories(c.data);
       setServices(s.data.items);
-    })();
-  }, []);
+    } catch (err) {
+      console.log("Status:", err.response?.status);
+    }
+  })();
+}, []);
 
   const search = (e) => {
     e.preventDefault();
