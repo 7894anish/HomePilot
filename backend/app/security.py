@@ -10,7 +10,7 @@ from .db import db, now_utc
 
 JWT_SECRET = os.environ.get("JWT_SECRET", "change-me-very-long-secret-key-32chars")
 JWT_ALGO = "HS256"
-
+IS_PROD = os.getenv("ENV") == "production"
 
 def hash_pw(pw: str) -> str:
     return bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode()
@@ -39,12 +39,33 @@ def make_refresh(user_id: str) -> str:
     )
 
 
-def set_auth_cookies(res: Response, access: str, refresh: str) -> None:
-    res.set_cookie("access_token", access, httponly=True, secure=True, samesite="none",
-                   max_age=8 * 3600, path="/")
-    res.set_cookie("refresh_token", refresh, httponly=True, secure=True, samesite="none",
-                   max_age=7 * 86400, path="/")
+# def set_auth_cookies(res: Response, access: str, refresh: str) -> None:
+#     res.set_cookie("access_token", access, httponly=True, secure=True, samesite="none",
+#                    max_age=8 * 3600, path="/")
+#     res.set_cookie("refresh_token", refresh, httponly=True, secure=True, samesite="none",
+#                    max_age=7 * 86400, path="/")
 
+
+def set_auth_cookies(res: Response, access: str, refresh: str):
+    res.set_cookie(
+        "access_token",
+        access,
+        httponly=True,
+        secure=IS_PROD,
+        samesite="none" if IS_PROD else "lax",
+        max_age=8 * 3600,
+        path="/",
+    )
+
+    res.set_cookie(
+        "refresh_token",
+        refresh,
+        httponly=True,
+        secure=IS_PROD,
+        samesite="none" if IS_PROD else "lax",
+        max_age=7 * 86400,
+        path="/",
+    )
 
 def clear_auth_cookies(res: Response) -> None:
     res.delete_cookie("access_token", path="/")
