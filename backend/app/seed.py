@@ -7,8 +7,8 @@ from .security import hash_pw
 
 log = logging.getLogger("homefix.seed")
 
-ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@homefix.pro")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "anish.homepilot@gmail.com")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Jphomepilot@079#")
 
 CATEGORIES = [
     {"name": "Home Cleaning", "slug": "cleaning", "icon": "Sparkles",
