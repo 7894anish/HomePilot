@@ -1,16 +1,18 @@
-"""Transactional email helper — uses Emergent-managed Resend proxy.
+"""Transactional email helper using the standard Resend HTTP API.
 
-If EMERGENT_EMAIL_KEY is not set (integration not yet provisioned), the emails
-are logged to backend logs instead of sent, so the app keeps working.
+When RESEND_API_KEY or EMAIL_FROM is not configured, messages are logged so
+local development remains fully functional.
 """
-import os
 import logging
+import os
+
 import httpx
 
 log = logging.getLogger("homefix.email")
 
-EMAIL_BASE_URL = "https://integrations.emergentagent.com"
-EMAIL_KEY = os.environ.get("EMERGENT_EMAIL_KEY", "")
+RESEND_API_URL = "https://api.resend.com/emails"
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+EMAIL_FROM = os.environ.get("EMAIL_FROM", "")
 EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "HomeFix Pro")
 
 
@@ -43,36 +45,49 @@ def _wrap(title: str, body_html: str) -> str:
 
 async def send_email(to: str, subject: str, title: str, body_html: str,
                      reply_to: str | None = None) -> None:
-    """Fire-and-forget email send. Errors are logged, never raised."""
+    """Send an email without allowing delivery errors to break app requests."""
     html = _wrap(title, body_html)
-    if not EMAIL_KEY:
-        log.info(f"[email:mock] to={to} subject={subject!r} — set EMERGENT_EMAIL_KEY to enable real sends")
+    if not RESEND_API_KEY or not EMAIL_FROM:
+        log.info(
+            "[email:mock] to=%s subject=%r — set RESEND_API_KEY and EMAIL_FROM to send",
+            to,
+            subject,
+        )
         log.debug(html)
         return
+
     payload = {
+        "from": f"{EMAIL_FROM_NAME} <{EMAIL_FROM}>",
         "to": [to],
         "subject": subject,
         "html": html,
-        "from_name": EMAIL_FROM_NAME,
     }
     if reply_to:
-        payload["contact_email"] = reply_to
+        payload["reply_to"] = reply_to
+
     try:
-        async with httpx.AsyncClient(timeout=20) as c:
-            r = await c.post(
-                f"{EMAIL_BASE_URL}/api/v1/email/send",
-                headers={"X-Email-Key": EMAIL_KEY},
+        async with httpx.AsyncClient(timeout=20) as client:
+            response = await client.post(
+                RESEND_API_URL,
+                headers={
+                    "Authorization": f"Bearer {RESEND_API_KEY}",
+                    "User-Agent": "HomeFix-Pro/1.0",
+                },
                 json=payload,
             )
-            r.raise_for_status()
-            log.info(f"[email] sent to={to} subject={subject!r} id={r.json().get('id')}")
-    except httpx.HTTPStatusError as e:
-        log.error(f"[email] failed {e.response.status_code}: {e.response.text[:200]}")
-    except Exception as e:
-        log.error(f"[email] error: {e}")
+            response.raise_for_status()
+            log.info(
+                "[email] sent to=%s subject=%r id=%s",
+                to,
+                subject,
+                response.json().get("id"),
+            )
+    except httpx.HTTPStatusError as exc:
+        log.error("[email] failed %s: %s", exc.response.status_code, exc.response.text[:200])
+    except Exception:
+        log.exception("[email] delivery error")
 
 
-# ---------- Ready-made templates ----------
 def welcome_email(name: str) -> tuple[str, str, str]:
     return (
         "Welcome to HomeFix Pro!",

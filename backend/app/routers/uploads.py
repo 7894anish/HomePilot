@@ -1,4 +1,4 @@
-"""File upload → Emergent object storage."""
+"""Authenticated image upload and download endpoints."""
 import uuid
 import logging
 

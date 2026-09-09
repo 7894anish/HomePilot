@@ -1,5 +1,6 @@
 """HomeFix Pro — FastAPI app entrypoint."""
 import logging
+import os
 
 from fastapi import FastAPI, APIRouter
 from starlette.middleware.cors import CORSMiddleware
@@ -11,7 +12,7 @@ from app.storage import init_storage
 from app.routers.auth import router as auth_router, profile_router
 from app.routers.catalog import router as catalog_router
 from app.routers.bookings import router as bookings_router
-# from app.routers.payments import router as payments_router
+from app.routers.payments import router as payments_router
 from app.routers.admin import router as admin_router
 from app.routers.uploads import router as uploads_router
 
@@ -26,7 +27,7 @@ api.include_router(auth_router)
 api.include_router(profile_router)
 api.include_router(catalog_router)
 api.include_router(bookings_router)
-# api.include_router(payments_router)
+api.include_router(payments_router)
 api.include_router(admin_router)
 api.include_router(uploads_router)
 
@@ -38,22 +39,19 @@ async def root():
 
 app.include_router(api)
 
+cors_origins = [
+    origin.strip()
+    for origin in os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=".*",
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[
-#         "http://localhost:3000",
-#     ],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
 @app.on_event("startup")
 async def startup():
